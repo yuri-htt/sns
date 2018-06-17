@@ -44,7 +44,30 @@ function addUser(userid, passwd, callback) {
     })
 }
 
+function login(userid, passwd, callback) {
+    const hash = getHash(passwd)
+    const token = getAuthToken(userid)
+
+    getUser(userid, (user) => {
+        if (!user || user.hash !== hash) {
+            return callbask(new Error('認証エラー'), null)
+        }
+        user.token = token
+        updateUser(user, (err) => {
+            if (err) return callback(err, null)
+            callback(null, token)
+        })
+    })
+}
+
+function updateUser(user, callback) {
+    userDB.update({userid: user.userid}, user, {}, (err, n) => {
+        if (err) return callback(err, null)
+        callback(null)
+    })
+}
+
 module.exports = {
-    userDB, timelineDB, getUser, addUser
+    userDB, timelineDB, getUser, addUser, login, updateUser
 }
   

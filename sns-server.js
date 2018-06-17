@@ -35,3 +35,17 @@ app.get('/api/adduser', (req, res) => {
         })
     })
 })
+
+// API:ログイン
+app.get('/api/login', (req, res) => {
+    const userid = req.query.userid
+    const passwd = req.query.passwd
+    db.login(userid, passwd, (err, token) => {
+        if (err) {
+            res.json({status: false, msg: '認証エラー'})
+            return
+        }
+        // ログイン成功したらトークンを返す
+        res.json({status: true, token})
+    })
+})
