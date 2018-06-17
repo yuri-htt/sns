@@ -13,3 +13,25 @@ app.listen(portNo, () => {
   console.log('起動しました', `http://localhost:${portNo}`)
 })
 
+// API:ユーザーの追加
+app.get('/api/adduser', (req, res) => {
+    const userid = req.query.userid
+    const passwd = req.query.passwd
+
+    if (userid === '' || passwd ===  '') {
+        return res.json({status: false, msg: 'パラメータが空です。'})
+    }
+    // 既存ユーザーであるか
+    db.getUser(userid, (user) => {
+        if (user) {
+            return res.json({status: false, msg: '既にユーザーがいます'})
+        }
+        // 新規追加
+        db.addUser(userid, passwd, (token) => {
+            if(!token) {
+                res.json({status: false, msg:'DBエラー'})
+            }
+            res.json({status: true, token})
+        })
+    })
+})
