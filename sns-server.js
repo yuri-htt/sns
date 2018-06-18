@@ -97,6 +97,13 @@ app.get('/api/add_timeline', (req, res) => {
 })
 
 // API:ユーザの一覧を取得
+app.get('/api/get_allusers', (req, res) => {
+    db.userDB.find({}, (err, docs) => {
+        if (err) return res.json({status: false})
+        const users = docs.map(e => e.userid)
+        res.json({status: true, users})
+    })
+})
 
 // API:ユーザ情報を取得
 
