@@ -67,7 +67,28 @@ function updateUser(user, callback) {
     })
 }
 
+function getFriendsTimeline(userid, token, callback) {
+    checkToken(userid, token, (err, user) => {
+        if (err) return callback(new Error('認証が失敗しました'), null)
+        // 友達一覧を取得
+        const friends = []
+        for (const f in user.friends) friends.push(f)
+        friends.push(userid)
+        timelineDB
+            .find({userid: {$in: friends}})
+            .sort({time: -1})
+            .limit(20)
+            .exec((err, docs) => {
+                if (err) {
+                    callback(new Error('DBエラー'), null)
+                    return 
+                }
+                callback(null, docs)
+            })
+    })
+}
+
 module.exports = {
-    userDB, timelineDB, getUser, addUser, login, updateUser
+    userDB, timelineDB, getUser, addUser, login, updateUser, getFriendsTimeline
 }
   

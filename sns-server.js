@@ -115,6 +115,17 @@ app.get('/api/get_user', (req, res) => {
 })
 
 // API:友達のタイムラインを取得
+app.get('/api/get_friends_timeline', (req, res) => {
+    const userid = req.query.userid
+    const token = req.query.token
+    db.getFriendsTimeline(userid, token, (err, docs) => {
+        if (err) {
+            res.json({status: false, msg: err.toString()})
+            return
+        }
+        res.json({status: true, timelines: docs})
+    })
+})
 
 // 静的ファイルを自動的に返すようルーティング
 app.use('/public', express.static('./public'))
