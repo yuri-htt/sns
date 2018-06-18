@@ -49,3 +49,40 @@ app.get('/api/login', (req, res) => {
         res.json({status: true, token})
     })
 })
+
+// API:友達追加
+app.get('/api/add_friend', (req, res) => {
+    const userid = req.query.userid
+    const token = req.query.token
+    const friendid = req.query.friendid
+
+    db.checkToken(userid, token, (err, user) => {
+        if (err) {
+            res.json({status: false, msg:'認証エラー'})
+            return
+        }
+        user.friends[friendid] = true
+        db.updateUser(user, (err) => {
+            if (err) {
+                res.json({status: false, msg: 'DBエラー'})
+                return
+            }
+            res.json({status: true})
+        })
+    })
+})
+
+// API:自分のタイムラインに発言
+
+// API:ユーザの一覧を取得
+
+// API:ユーザ情報を取得
+
+// API:友達のタイムラインを取得
+
+// 静的ファイルを自動的に返すようルーティング
+app.use('/public', express.static('./public'))
+app.use('/login', express.static('./public'))
+app.use('/users', express.static('./public'))
+app.use('/timeline', express.static('./public'))
+app.use('/', express.static('./public'))
