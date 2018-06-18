@@ -73,6 +73,28 @@ app.get('/api/add_friend', (req, res) => {
 })
 
 // API:自分のタイムラインに発言
+app.get('/api/add_timeline', (req, res) => {
+    const userid = req.query.userid
+    const token = req.query.token
+    const comment = req.query.comment
+    const time = (new Date()).getTime()
+
+    db.checkToken(userid, token, (err, user) => {
+        if (err) {
+            res.json({status: false, msg: '認証エラー'})
+            return
+        }
+        // タイムラインに追加
+        const item = {userid, comment, time}
+        db.timelineDB.insert(item, (err, it) => {
+            if (err) {
+                res.json({status: false, msg: 'DBエラー'})
+                return
+            }
+            res.json({status: true, timelineid: it._id})
+        })
+    })
+})
 
 // API:ユーザの一覧を取得
 
