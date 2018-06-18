@@ -106,6 +106,13 @@ app.get('/api/get_allusers', (req, res) => {
 })
 
 // API:ユーザ情報を取得
+app.get('/api/get_user', (req, res) => {
+    const userid = req.query.userid
+    db.getUser(userid, (user) => {
+        if (!user) return res.json({status: false})
+        res.json({status: true, friends: user.friends})
+    })
+})
 
 // API:友達のタイムラインを取得
 
