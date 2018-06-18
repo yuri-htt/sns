@@ -34,6 +34,15 @@ function getUser(userid, callback) {
     })
 }
 
+function checkToken (userid, token, callback) {
+    getUser(userid, (user) => {
+    if (!user || user.token !== token) {
+        return callback(new Error('認証に失敗'), null)
+    }
+    callback(null, user)
+    })
+}
+
 function addUser(userid, passwd, callback) {
     const hash = getHash(passwd)
     const token = getAuthToken(userid)
@@ -67,28 +76,27 @@ function updateUser(user, callback) {
     })
 }
 
-function getFriendsTimeline(userid, token, callback) {
+function getFriendsTimeline (userid, token, callback) {
     checkToken(userid, token, (err, user) => {
-        if (err) return callback(new Error('認証が失敗しました'), null)
-        // 友達一覧を取得
-        const friends = []
-        for (const f in user.friends) friends.push(f)
-        friends.push(userid)
-        timelineDB
-            .find({userid: {$in: friends}})
-            .sort({time: -1})
-            .limit(20)
-            .exec((err, docs) => {
-                if (err) {
-                    callback(new Error('DBエラー'), null)
-                    return 
-                }
-                callback(null, docs)
-            })
+    if (err) return callback(new Error('認証に失敗'), null)
+    const friends = []
+    for (const f in user.friends) friends.push(f)
+    friends.push(userid)
+    timelineDB
+        .find({userid: {$in: friends}})
+        .sort({time: -1})
+        .limit(20)
+        .exec((err, docs) => {
+        if (err) {
+            callback(new Error('DBエラー'), null)
+            return
+        }
+        callback(null, docs)
+        })
     })
 }
 
 module.exports = {
-    userDB, timelineDB, getUser, addUser, login, updateUser, getFriendsTimeline
+    userDB, timelineDB, getUser, addUser, login, checkToken, updateUser, getFriendsTimeline
 }
   
