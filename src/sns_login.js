@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import request from 'superagent'
-import {Redirect} from 'react-router-dom'
+import {Redirect } from 'react-router-dom'
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import styles from './styles'
 
 export default class SNSLogin extends Component {
@@ -34,25 +36,52 @@ export default class SNSLogin extends Component {
 
     render() {
         if (this.state.jump) {
-        return <Redirect to={this.state.jump} />
+            return <Redirect to={this.state.jump} />
         }
+        
         const changed = (name, e) => this.setState({[name]: e.target.value})
         return (
-        <div>
-            <h1>ログイン</h1>
-            <div style={styles.login}>
-            ユーザID:<br />
-            <input value={this.state.userid}
-                onChange={e => changed('userid', e)} /><br />
-            パスワード:<br />
-            <input type='password' value={this.state.passwd}
-                onChange={e => changed('passwd', e)} /><br />
-            <button onClick={e => this.api('login')}>ログイン</button><br />
-            <p style={styles.error}>{this.state.msg}</p>
-            <p><button onClick={e => this.api('adduser')}>
-                ユーザ登録(初回)</button></p>
+            <div style={styles.scene}>
+                <div style={styles.modal}>
+                    <h1 style={styles.title}>MEMBER</h1>
+                    <form style={styles.login} noValidate autoComplete="off">
+
+                        <TextField
+                            id="name"
+                            label="Name"
+                            className={styles.textField}
+                            style={styles.textField}
+                            value={this.state.userid}
+                            onChange={e => changed('userid', e)}
+                            margin="normal"
+                        />
+                        <br />
+                        <TextField
+                            id="password-input"
+                            label="Password"
+                            type="password"
+                            className={styles.textField}
+                            style={styles.textField}
+                            value={this.state.passwd}
+                            onChange={e => changed('passwd', e)}
+                            autoComplete="current-password"
+                            margin="normal"
+                        />
+                    </form>
+
+                    <div style={styles.buttonContainer}>
+                        <Button variant="raised" color="primary" onClick={e => this.api('login')} style={styles.button}>
+                            LOGIN
+                        </Button>
+
+                        <p style={styles.error}>{this.state.msg}</p>
+
+                        <Button variant="raised" color="primary" onClick={e => this.api('adduser')} style={styles.button}>
+                            SIGN IN
+                        </Button>
+                    </div>
+                </div>
             </div>
-        </div>
         )
     }
 }
